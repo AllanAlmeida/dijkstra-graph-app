@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +32,7 @@ public class SwaggerConfiguration {
     public Docket api() {
 
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(RequestHandlerSelectors.basePackage("br.radixeng.controller"))
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.regex(DEFAULT_INCLUDE_PATTERN))
                 .build()
                 .apiInfo(apiEndPointsInfo())

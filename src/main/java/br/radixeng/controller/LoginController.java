@@ -15,7 +15,7 @@ import br.radixeng.jwt.filter.UserCredentials;
 @RestController
 public class LoginController {
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST, 
+	@RequestMapping(value = "/logingraph", method = RequestMethod.POST, 
 			consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<String> jwtToken(UserCredentials user) {

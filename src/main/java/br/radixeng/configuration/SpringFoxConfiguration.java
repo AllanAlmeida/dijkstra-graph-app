@@ -22,13 +22,14 @@ public class SpringFoxConfiguration extends WebSecurityConfigurerAdapter {
 		
 		httpSecurity.csrf().disable().authorizeRequests()
 			.antMatchers("/").permitAll()
-			.antMatchers("/console/**", "/swagger**/**", "/webjars/**", "/v2/**", "/error**").permitAll()
-			.antMatchers("/login").permitAll()
+			.and().headers().frameOptions().disable()
+			.and().authorizeRequests().antMatchers("/js/**", "/*.ico", "/distanciaMinima**", "/register", "/register/**", "/console/**", "/swagger**/**", "/webjars/**", "/v2/**", "/error**").permitAll()
+			.antMatchers("/logingraph").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			
 			// filtra requisições de login
-			.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JWTLoginFilter("/logingraph", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
 			
 			// filtra outras requisições para verificar a presença do JWT no header
 			.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -38,7 +39,7 @@ public class SpringFoxConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// cria uma conta default
 		auth.inMemoryAuthentication()
-			.withUser("admin")
+			.withUser("radix")
 			.password("radix")
 			.roles("ADMIN");
 	}

@@ -100,9 +100,7 @@ public class Dijkstra {
 			 * Ordena a lista, para que o vertice com menor distancia fique na
 			 * primeira posicao
 			 */
-
 			Collections.sort(naoVisitados);
-			System.out.println("Nao foram visitados ainda:"+naoVisitados);
 		}
 
 		return menorCaminho;

@@ -22,6 +22,7 @@ import br.radixeng.service.RouteServiceImpl;
 *
 */
 @RestController
+@RequestMapping("/")
 public class RouteController {
 	
 	@Autowired
@@ -30,7 +31,7 @@ public class RouteController {
 	public RouteController(RouteServiceImpl routeService) {
 	       this.routeService = routeService;
 	}
-		
+	
 	@RequestMapping(value = "/routes/{graphId}/from/{town1}/to/{town2}", method = RequestMethod.GET)
     public ResponseEntity<RouteDTO> listAllRoutes(
     		@PathVariable("graphId") Long graphId,

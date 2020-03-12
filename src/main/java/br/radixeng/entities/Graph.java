@@ -27,7 +27,7 @@ public class Graph implements Serializable {
 	@Column(name = "graph_id")
 	private long id;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
 	private List<Route> data = new ArrayList<>();
 
 	public Graph(){

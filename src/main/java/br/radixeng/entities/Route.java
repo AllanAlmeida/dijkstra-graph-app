@@ -26,6 +26,7 @@ public class Route implements Serializable {
 	
 	private String source;
 	
+
 	private String target;
 	
 	private Integer distance;
@@ -62,5 +63,13 @@ public class Route implements Serializable {
 	
 	public void setDistance(Integer distance) {
 		this.distance = distance;
+	}
+
+	public long getId() {
+		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
 	}
 }
