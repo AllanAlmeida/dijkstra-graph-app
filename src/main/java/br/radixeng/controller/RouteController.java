@@ -22,7 +22,6 @@ import br.radixeng.service.RouteServiceImpl;
 *
 */
 @RestController
-@RequestMapping("/")
 public class RouteController {
 	
 	@Autowired
