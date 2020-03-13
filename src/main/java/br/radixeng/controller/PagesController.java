@@ -10,4 +10,9 @@ public class PagesController {
     public String distanciaMinima() {
         return "distanciaMinima";
     }
+
+    @RequestMapping("/")
+    public String index() {
+        return "redirect:/distanciaMinima";
+    }
 }
