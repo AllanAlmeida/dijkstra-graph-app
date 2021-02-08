@@ -1,8 +1,10 @@
 package br.radixeng.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import br.radixeng.entities.Graph;
@@ -21,7 +23,15 @@ public class GraphServiceImpl implements IGraphService{
 	
 	@Override
 	public Graph findById(Long id) {
-		return graphRepository.findOne(id);
+		
+		Optional<Graph> graphOptional = graphRepository.findById(id);
+		
+		if (graphOptional.isPresent()) {
+			
+			return graphOptional.get();
+		} 
+		
+		return null;
 	}
 	
 	@Override

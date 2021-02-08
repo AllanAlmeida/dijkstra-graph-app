@@ -23,8 +23,10 @@ public class SpringFoxConfiguration extends WebSecurityConfigurerAdapter {
 		httpSecurity.csrf().disable().authorizeRequests()
 			.antMatchers("/").permitAll()
 			.and().headers().frameOptions().disable()
-			.and().authorizeRequests().antMatchers("/js/**", "/*.ico", "/distanciaMinima**", "/register", "/register/**", "/console/**", "/swagger**/**", "/webjars/**", "/v2/**", "/error**").permitAll()
-			.antMatchers("/logingraph").permitAll()
+			.and()
+			.authorizeRequests()
+				.antMatchers("/js/**", "/*.ico", "/distanciaMinima**", "/register", "/register/**", "/console/**", "/swagger**/**", "/webjars/**", "/v2/**", "/error**").permitAll()
+				.antMatchers("/logingraph").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			
@@ -40,7 +42,7 @@ public class SpringFoxConfiguration extends WebSecurityConfigurerAdapter {
 		// cria uma conta default
 		auth.inMemoryAuthentication()
 			.withUser("radix")
-			.password("radix")
+			.password("{noop}radix")
 			.roles("ADMIN");
 	}
 }

@@ -2,8 +2,6 @@ package br.radixeng.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +58,7 @@ public class GraphController {
     }
 	
 	@RequestMapping(value = "/graph", method =  RequestMethod.POST)
-    public ResponseEntity<Graph> saveGraph(@Valid @RequestBody Graph graph){
+    public ResponseEntity<Graph> saveGraph(@RequestBody Graph graph){
        
 		try {
 			
