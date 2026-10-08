@@ -1,7 +1,5 @@
 $(document).ready(function () {
 
-    get_tokem();
-
     $("#search-form").submit(function (event) {
 
         //stop submit the form, we will post it manually.
@@ -12,23 +10,6 @@ $(document).ready(function () {
     });
 
 });
-
-function get_tokem(){
-    $.ajax({
-        type: "POST",
-        url: "/logingraph",
-        data: {
-          "username": "radix",
-          "password": "radix"
-        },
-        success: function(data) {
-          localStorage.token = data
-        },
-        error: function() {
-          alert("Login Failed");
-        }
-      });
-}
 
 function fire_ajax_submit() {
 
@@ -47,12 +28,6 @@ function fire_ajax_submit() {
         dataType: 'json',
         cache: false,
         timeout: 600000,
-
-        beforeSend: function(xhr) { 
-          if (localStorage.token) {
-            xhr.setRequestHeader('Authorization', localStorage.token);
-          }
-        },
 
         success: function (data) {
 
