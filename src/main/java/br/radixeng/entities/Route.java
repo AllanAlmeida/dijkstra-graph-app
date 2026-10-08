@@ -21,7 +21,7 @@ public class Route implements Serializable {
 	private static final long serialVersionUID = 4095658960187068323L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	private String source;

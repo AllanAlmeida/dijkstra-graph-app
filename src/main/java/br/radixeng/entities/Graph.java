@@ -23,7 +23,7 @@ public class Graph implements Serializable {
 	private static final long serialVersionUID = -8023088477220190632L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "graph_id")
 	private long id;
 	
