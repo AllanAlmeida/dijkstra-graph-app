@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,28 +24,31 @@ import br.radixeng.Application;
 @SpringBootTest(classes = Application.class)
 class GraphControllerTest {
 
-	private MockMvc mockMvc;
-
 	@Autowired
-	private GraphController graphController;
+	private WebApplicationContext wac;
+
+	private MockMvc mockMvc;
 
 	@BeforeEach
 	void setUp() {
-		mockMvc = MockMvcBuilders.standaloneSetup(graphController).build();
+		// webAppContextSetup, e não standaloneSetup: standaloneSetup descarta a
+		// configuração real de MVC — conversores de mensagem e handlers de
+		// exceção incluídos — e testaria o controller fora da aplicação.
+		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test
-	void testGraphNotFound() throws Exception {
-		String inesistentGraphId = "123";
-		mockMvc.perform(get(String.format("/graph/%s", inesistentGraphId))).andExpect(status().isNotFound());
+	void grafoInexistenteDevolve404() throws Exception {
+		mockMvc.perform(get("/graph/{id}", 123)).andExpect(status().isNotFound());
 	}
 
 	@Test
-	void testSaveGraph() throws Exception {
+	void salvaGrafo() throws Exception {
 
-		this.mockMvc.perform(post("/graph").content(asJsonString(buildedGraph()))
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
+		mockMvc.perform(post("/graph")
+						.content(asJsonString(buildedGraph()))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().is2xxSuccessful());
 	}
 

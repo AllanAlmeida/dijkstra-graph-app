@@ -1,6 +1,5 @@
 package br.radixeng.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
@@ -41,7 +39,7 @@ class RouteControllerTest {
 	}
 
 	@Test
-	void testRoutCC() throws Exception {
+	void rotaDeUmVerticeParaEleMesmoTemZeroParadas() throws Exception {
 
 		String graphId = "2";
 		String town1 = "C";
@@ -55,29 +53,4 @@ class RouteControllerTest {
 					.andExpect(expected);
 	}
 
-	@Test
-	void testRoutACMaxStops4() throws Exception {
-
-		String graphId = "2";
-		String town1 = "A";
-		String town2 = "C";
-		String maxStops = "4";
-
-		MvcResult mvcResult = mockMvcBuild.perform(get(String.format("/routes/%s/from/%s/to/%s", graphId, town1, town2)).param("maxStops", maxStops))
-					.andExpect(status().isOk())
-					.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-					.andReturn();
-
-		String response = mvcResult.getResponse().getContentAsString();
-		assertEquals(expectedGraph(), response);
-	}
-
-	private static String expectedGraph() {
-		return "{\"routes\":["
-				+ "{\"route\":\"ABC\",\"stops\":2},"
-				+ "{\"route\":\"ADC\",\"stops\":2},"
-				+ "{\"route\":\"AEBC\",\"stops\":3},"
-				+ "{\"route\":\"ADEBC\",\"stops\":4}"
-				+ "]}";
-	}
 }

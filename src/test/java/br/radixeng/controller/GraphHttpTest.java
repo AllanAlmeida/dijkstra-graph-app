@@ -8,6 +8,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -23,6 +32,15 @@ import br.radixeng.Application;
  */
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GraphHttpTest {
+
+	private static final String ROTAS_GRAFO_2 = "{\"routes\":["
+			+ "{\"route\":\"ABC\",\"stops\":2},"
+			+ "{\"route\":\"ADC\",\"stops\":2},"
+			+ "{\"route\":\"AEBC\",\"stops\":3},"
+			+ "{\"route\":\"ADEBC\",\"stops\":4}"
+			+ "]}";
+
+	private static final String ROTAS_GRAFO_1 = "{\"routes\":[{\"route\":\"AB\",\"stops\":1}]}";
 
 	@LocalServerPort
 	private int port;
@@ -66,12 +84,7 @@ class GraphHttpTest {
 		HttpResponse<String> response = get("/routes/2/from/A/to/C?maxStops=4");
 
 		assertEquals(200, response.statusCode());
-		assertEquals("{\"routes\":["
-				+ "{\"route\":\"ABC\",\"stops\":2},"
-				+ "{\"route\":\"ADC\",\"stops\":2},"
-				+ "{\"route\":\"AEBC\",\"stops\":3},"
-				+ "{\"route\":\"ADEBC\",\"stops\":4}"
-				+ "]}", response.body());
+		assertEquals(ROTAS_GRAFO_2, response.body());
 	}
 
 	@Test
@@ -149,12 +162,7 @@ class GraphHttpTest {
 		HttpResponse<String> response = get("/routes/2/from/A/to/C");
 
 		assertEquals(200, response.statusCode());
-		assertEquals("{\"routes\":["
-				+ "{\"route\":\"ABC\",\"stops\":2},"
-				+ "{\"route\":\"ADC\",\"stops\":2},"
-				+ "{\"route\":\"AEBC\",\"stops\":3},"
-				+ "{\"route\":\"ADEBC\",\"stops\":4}"
-				+ "]}", response.body());
+		assertEquals(ROTAS_GRAFO_2, response.body());
 	}
 
 	@Test
@@ -174,5 +182,40 @@ class GraphHttpTest {
 	@Test
 	void payloadMalformadoDevolve400() throws Exception {
 		assertEquals(400, post("/graph", "{\"data\":\"nao-e-uma-lista\"}").statusCode());
+	}
+
+	@Test
+	void requisicoesConcorrentesDeGrafosDiferentesNaoSeMisturam() throws Exception {
+		// Guarda do refactor que tornou RouteServiceImpl sem estado. Antes, a
+		// adjacência vivia num campo de interface (logo static) compartilhado por
+		// todas as requisições, e addEdge acumulava: as arestas de um grafo
+		// vazavam para a consulta do outro. Se alguém reintroduzir estado
+		// compartilhado, um dos conjuntos abaixo passa a ter mais de um valor.
+		ExecutorService pool = Executors.newFixedThreadPool(8);
+
+		try {
+			List<Callable<String>> tarefas = new ArrayList<>();
+
+			for (int i = 0; i < 20; i++) {
+				tarefas.add(() -> get("/routes/2/from/A/to/C?maxStops=4").body());
+				tarefas.add(() -> get("/routes/1/from/A/to/B").body());
+			}
+
+			List<Future<String>> futuros = pool.invokeAll(tarefas);
+
+			// invokeAll preserva a ordem das tarefas: pares são do grafo 2, ímpares do 1
+			Set<String> respostasGrafo2 = new HashSet<>();
+			Set<String> respostasGrafo1 = new HashSet<>();
+
+			for (int i = 0; i < futuros.size(); i++) {
+				(i % 2 == 0 ? respostasGrafo2 : respostasGrafo1).add(futuros.get(i).get());
+			}
+
+			assertEquals(Set.of(ROTAS_GRAFO_2), respostasGrafo2);
+			assertEquals(Set.of(ROTAS_GRAFO_1), respostasGrafo1);
+
+		} finally {
+			pool.shutdownNow();
+		}
 	}
 }
