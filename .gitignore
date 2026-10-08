@@ -1,8 +1,12 @@
-/target
+target/
+*.log
+
+# IDEs
 .settings/
 .project
 .classpath
-.dbeaver/
-/.idea
+.idea/
 *.iml
-/nbproject/
+.vscode/
+nbproject/
+.dbeaver/
