@@ -1,13 +1,11 @@
 package br.radixeng.dijkstra;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,97 +104,78 @@ public class Dijkstra {
 		return menorCaminho;
 	}
 	
+	/**
+	 * Interpreta o grafo serializado, uma aresta por linha no formato
+	 * "origem,destino/peso".
+	 *
+	 * Devolve cada vértice uma única vez, inclusive os que aparecem apenas como
+	 * destino: registrar só as origens deixava vértices-sumidouro invisíveis
+	 * para Grafo.encontrarVertice, e consultas para eles não achavam caminho.
+	 */
 	public static List<Vertice> lerGrafo(String graphSerialize) throws GraphException {
 
-		Grafo g = new Grafo();
-		
-		Vertice v;
-		
-		String vertices[];
-		String linha;
-		
-		ArrayList<String[]> s1 = new ArrayList<String[]>();
+		Map<String, Vertice> mapa = new LinkedHashMap<String, Vertice>();
 
-		try {
-			
-			Reader inputString = new StringReader(graphSerialize);
-	        
-			BufferedReader br = new BufferedReader(inputString);
+		try (BufferedReader br = new BufferedReader(new StringReader(graphSerialize))) {
 
-			Map<String, Vertice> mapa = new HashMap<String, Vertice>();
+			String linha;
 
 			while ((linha = br.readLine()) != null) {
 
-				if (linha.contains(",")) {
-					
-					s1.add(linha.split("/"));
-					vertices = s1.get(0)[0].split(",");
+				linha = linha.trim();
 
-					v = (Vertice) mapa.get(vertices[0]);
-					
-					if (v == null) {
-						v = new Vertice();
-					}
-					
-					List<Vertice> vizinhosAtual = new ArrayList<Vertice>();
-					List<Aresta> arestasAtual = new ArrayList<Aresta>();
-					
-					v.setDescricao(vertices[0]);
-					
-					mapa.put(vertices[0], v);
-
-					if (linha.contains("/")) {
-
-						String pesoArestas[] = s1.get(0)[1].split(",");
-
-						for (int i = 1; i < vertices.length; i++) {
-							
-							Vertice vit;
-							vit = mapa.get(vertices[i]);
-							
-							if (vit == null) {
-								vit = new Vertice();
-							}
-							
-							vit.setDescricao(vertices[i]);
-							vizinhosAtual.add(vit);
-							mapa.put(vertices[i], vit);
-
-							Aresta ait = new Aresta(v, vit);
-							ait.setPeso(Integer.parseInt(pesoArestas[i - 1]));
-							arestasAtual.add(ait);
-						}
-						
-						v.setVizinhos(vizinhosAtual);
-						v.setArestas(arestasAtual);
-					}
-				
-				} else {
-
-					v = (Vertice) mapa.get(linha);
-				
-					if (v == null) {
-						v = new Vertice();
-					}
-					
-					v.setDescricao(linha);
-					mapa.put(linha, v);
+				if (linha.isEmpty()) {
+					continue;
 				}
 
-				g.adicionarVertice(v);
-				s1.clear();
+				String[] partes = linha.split("/");
+				String[] vertices = partes[0].split(",");
+
+				Vertice origem = vertice(mapa, vertices[0]);
+
+				if (partes.length < 2) {
+					continue;
+				}
+
+				String[] pesoArestas = partes[1].split(",");
+
+				List<Vertice> vizinhosAtual = new ArrayList<Vertice>();
+				List<Aresta> arestasAtual = new ArrayList<Aresta>();
+
+				for (int i = 1; i < vertices.length; i++) {
+
+					Vertice destino = vertice(mapa, vertices[i]);
+					vizinhosAtual.add(destino);
+
+					Aresta aresta = new Aresta(origem, destino);
+					aresta.setPeso(Integer.parseInt(pesoArestas[i - 1]));
+					arestasAtual.add(aresta);
+				}
+
+				origem.setVizinhos(vizinhosAtual);
+				origem.setArestas(arestasAtual);
 			}
 
-			// catch do BufferedReader
-		} catch (FileNotFoundException e) {
-			
-			throw new GraphException("Referência de arquivo não encontrada", e);
-		
 		} catch (IOException e) {
-			
-			throw new GraphException("Erro ao registrar a referência do aquivo", e);
+
+			throw new GraphException("Erro ao ler o grafo serializado", e);
+
+		} catch (NumberFormatException e) {
+
+			throw new GraphException("Peso de aresta inválido no grafo serializado", e);
 		}
-		
-		return g.getVertices();
+
+		return new ArrayList<Vertice>(mapa.values());
+	}
+
+	private static Vertice vertice(Map<String, Vertice> mapa, String descricao) {
+
+		return mapa.computeIfAbsent(descricao, nome -> {
+
+			Vertice vertice = new Vertice();
+			vertice.setDescricao(nome);
+
+			return vertice;
+		});
 	}
 }

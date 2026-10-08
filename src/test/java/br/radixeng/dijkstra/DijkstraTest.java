@@ -1,6 +1,7 @@
 package br.radixeng.dijkstra;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
@@ -103,6 +104,31 @@ class DijkstraTest {
 	@Test
 	void lerGrafoInterpretaTodosOsVertices() throws Exception {
 		assertEquals(List.of("A", "B", "C", "D", "E"),
-				descricoes(grafo().getVertices()).stream().distinct().sorted().toList());
+				descricoes(grafo().getVertices()).stream().sorted().toList());
+	}
+
+	@Test
+	void cadaVerticeApareceUmaUnicaVez() throws Exception {
+		// lerGrafo chamava adicionarVertice uma vez por linha, então a origem de
+		// várias arestas vinha repetida na lista (A aparecia 3 vezes neste grafo).
+		assertEquals(5, grafo().getVertices().size());
+	}
+
+	@Test
+	void verticeQueSoApareceComoDestinoEEncontrado() throws Exception {
+		// Mesmo grafo 1 do DataBaseLoader: B e E nunca são origem de aresta.
+		// Antes só as origens eram registradas como vértices, então
+		// encontrarVertice("B") devolvia null e não havia caminho A->B.
+		Grafo grafo = new Grafo();
+		grafo.setVertices(Dijkstra.lerGrafo("A,B/4\nA,E/8\n"));
+
+		assertNotNull(grafo.encontrarVertice("B"));
+		assertNotNull(grafo.encontrarVertice("E"));
+
+		List<Vertice> caminho = new Dijkstra().encontrarMenorCaminhoDijkstra(
+				grafo, grafo.encontrarVertice("A"), grafo.encontrarVertice("B"));
+
+		assertEquals(List.of("A", "B"), descricoes(caminho));
+		assertEquals(4, caminho.get(caminho.size() - 1).getDistancia());
 	}
 }
