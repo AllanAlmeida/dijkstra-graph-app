@@ -1,80 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Distância Mínima</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
 
-    <link rel="stylesheet" type="text/css"
-          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <!-- Caminho sem a versão: resolvido pelo webjars-locator-lite, para que
+         atualizar o webjar no pom não quebre esta referência. -->
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
 </head>
-<body>
 
-<nav class="navbar navbar-inverse">
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-dark">
     <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Menor caminho entre dois vértices de um grafo</a>
-        </div>
+        <span class="navbar-brand mb-0 h1">Menor caminho entre dois vértices de um grafo</span>
     </div>
 </nav>
 
-<div class="container" style="min-height: 500px">
+<main class="container flex-grow-1 py-4">
 
-    <div class="starter-template">
-        <h1>Informações para o cálculo</h1>
+    <h1 class="h3 mb-3">Informações para o cálculo</h1>
 
-        <form class="form-horizontal" id="search-form">
-            <div class="form-group form-group-lg">
+    <p class="text-body-secondary">
+        Dois grafos de exemplo são criados a cada inicialização:
+        <strong>1</strong> (arestas AB4, AE8) e
+        <strong>2</strong> (AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7).
+    </p>
 
-                <label class="col-sm-2 control-label">Id do grafo:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="graphId"/>
-                </div>
-            </div>
+    <form id="search-form" class="row g-3" novalidate>
 
-            <div class="form-group form-group-lg">
-            	
-                <label class="col-sm-2 control-label">Origem:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="town1"/>
-                </div>
-            </div>
+        <div class="col-12 col-md-4">
+            <label for="graphId" class="form-label">Id do grafo</label>
+            <input type="text" class="form-control" id="graphId" value="2" autocomplete="off"/>
+        </div>
 
-            <div class="form-group form-group-lg">
-            	
-                <label class="col-sm-2 control-label">Destino:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="town2"/>
-                </div>
-            </div>
+        <div class="col-12 col-md-4">
+            <label for="town1" class="form-label">Origem</label>
+            <input type="text" class="form-control" id="town1" placeholder="A" autocomplete="off"/>
+        </div>
 
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" id="bth-search"
-                            class="btn btn-primary btn-lg">Calcular
-                    </button>
-                </div>
-            </div>
-        </form>
+        <div class="col-12 col-md-4">
+            <label for="town2" class="form-label">Destino</label>
+            <input type="text" class="form-control" id="town2" placeholder="C" autocomplete="off"/>
+        </div>
 
-		<div id="feedback"></div>
-		
-    </div>
+        <div class="col-12">
+            <button type="submit" id="btn-search" class="btn btn-primary btn-lg">Calcular</button>
+        </div>
+    </form>
 
-</div>
+    <div id="feedback" class="mt-4"></div>
 
-<div class="container">
-    <footer>
-        <p>
-            © <a href="https://www.linkedin.com/in/allan-almeida-33014275/">Allan Almeida</a> 2020
-        </p>
-    </footer>
-</div>
+</main>
 
-<script type="text/javascript"
-        src="webjars/jquery/2.2.4/jquery.min.js"></script>
+<footer class="container py-3 border-top">
+    <p class="text-body-secondary mb-0">
+        <a href="https://www.linkedin.com/in/allan-almeida-33014275/">Allan Almeida</a>
+    </p>
+</footer>
 
-<script type="text/javascript" src="/js/distancia-minima.js"></script>
+<script src="/js/distancia-minima.js"></script>
 
 </body>
 </html>

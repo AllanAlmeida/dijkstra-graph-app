@@ -1,63 +1,105 @@
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
 
-    $("#search-form").submit(function (event) {
+    var form = document.getElementById('search-form');
+    var button = document.getElementById('btn-search');
+    var feedback = document.getElementById('feedback');
 
-        //stop submit the form, we will post it manually.
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
-        
-        fire_ajax_submit();
-
+        calcular();
     });
 
-});
+    function calcular() {
 
-function fire_ajax_submit() {
+        var graphId = document.getElementById('graphId').value.trim();
+        var town1 = document.getElementById('town1').value.trim();
+        var town2 = document.getElementById('town2').value.trim();
 
-    var graphId = $("#graphId").val();
-    var town1 = $("#town1").val();
-    var town2 = $("#town2").val();
-    
-    var formedUrl = "/distance/"+graphId+"/from/"+town1+"/to/"+town2;
-
-    $("#btn-search").prop("disabled", true);
-
-    $.ajax({
-        type: "GET",
-        contentType: "application/json",
-        url: formedUrl,
-        dataType: 'json',
-        cache: false,
-        timeout: 600000,
-
-        success: function (data) {
-
-            var json = "<pre>" + "Distancia: " + data.distance + "<br>Caminho: " + obterCaminho(data.path) + "</pre>";
-            $('#feedback').html(json);
-            $("#btn-search").prop("disabled", false);
-
-        },
-
-        error: function (e) {
-
-            var json = "<pre>" + e.responseText + "</pre>";
-            $('#feedback').html(json);
-            $("#btn-search").prop("disabled", false);
-
+        if (!graphId || !town1 || !town2) {
+            aviso('warning', 'Preencha o id do grafo, a origem e o destino.');
+            return;
         }
-    });
-}
 
-function obterCaminho(array) {
+        var url = '/distance/' + encodeURIComponent(graphId)
+                + '/from/' + encodeURIComponent(town1)
+                + '/to/' + encodeURIComponent(town2);
 
-    var arrayString = "";
-    var stringCaminho = "";
+        button.disabled = true;
 
-    if(typeof array !== 'undefined' && array.length > 0){
-    
-        arrayString = array.toString();
-        stringCaminho = arrayString.replace(/,/g, " => ");
+        fetch(url, { headers: { 'Accept': 'application/json' } })
+            .then(function (response) {
+
+                if (response.status === 404) {
+                    aviso('warning', 'Não há caminho de ' + town1 + ' até ' + town2
+                            + ' no grafo ' + graphId + '.');
+                    return null;
+                }
+
+                if (!response.ok) {
+                    aviso('danger', 'A consulta falhou (HTTP ' + response.status + ').');
+                    return null;
+                }
+
+                return response.json();
+            })
+            .then(function (data) {
+                if (data) {
+                    resultado(data);
+                }
+            })
+            .catch(function () {
+                aviso('danger', 'Não foi possível falar com o servidor.');
+            })
+            .then(function () {
+                button.disabled = false;
+            });
     }
-    
-    return stringCaminho;
-}
 
+    function resultado(data) {
+
+        feedback.replaceChildren();
+
+        var card = document.createElement('div');
+        card.className = 'card';
+
+        var body = document.createElement('div');
+        body.className = 'card-body';
+
+        body.appendChild(linha('Distância', String(data.distance)));
+        body.appendChild(linha('Caminho', caminho(data.path)));
+
+        card.appendChild(body);
+        feedback.appendChild(card);
+    }
+
+    function linha(rotulo, valor) {
+
+        var p = document.createElement('p');
+        p.className = 'mb-1';
+
+        var strong = document.createElement('strong');
+        strong.textContent = rotulo + ': ';
+
+        p.appendChild(strong);
+        // textContent, e não innerHTML: o conteúdo vem da resposta da API
+        p.appendChild(document.createTextNode(valor));
+
+        return p;
+    }
+
+    function caminho(path) {
+        return Array.isArray(path) ? path.join(' => ') : '';
+    }
+
+    function aviso(tipo, mensagem) {
+
+        feedback.replaceChildren();
+
+        var alerta = document.createElement('div');
+        alerta.className = 'alert alert-' + tipo;
+        alerta.setAttribute('role', 'alert');
+        alerta.textContent = mensagem;
+
+        feedback.appendChild(alerta);
+    }
+});
