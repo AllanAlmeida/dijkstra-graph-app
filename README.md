@@ -1,23 +1,23 @@
 # Dijkstra Graph App
 
-Calcula o **menor caminho entre dois vértices de um grafo** com o algoritmo de
-Dijkstra, e também lista **todas as rotas possíveis** entre dois vértices.
+Finds the **shortest path between two vertices of a graph** using Dijkstra's
+algorithm, and also lists **every possible route** between two vertices.
 
-Aplicação Spring Boot que roda inteiramente na sua máquina: frontend e backend
-sobem no mesmo processo, e o banco é em memória. Não há nada para instalar,
-configurar ou provisionar.
+A Spring Boot application that runs entirely on your machine: frontend and
+backend start in the same process, and the database is in-memory. There is
+nothing to install, configure or provision.
 
-## Pré-requisito
+## Requirement
 
-Apenas um **JDK 21 ou superior**.
+Just a **JDK 21 or newer**.
 
 ```bash
 java -version
 ```
 
-Maven não é necessário: o projeto traz o Maven Wrapper (`./mvnw`).
+Maven is not required — the project ships with the Maven Wrapper (`./mvnw`).
 
-## Como rodar
+## Running it
 
 ```bash
 git clone https://github.com/AllanAlmeida/dijkstra-graph-app.git
@@ -25,50 +25,50 @@ cd dijkstra-graph-app
 ./mvnw spring-boot:run
 ```
 
-No Windows, use `mvnw.cmd` em vez de `./mvnw`.
+On Windows, use `mvnw.cmd` instead of `./mvnw`.
 
-Depois abra <http://localhost:8080>.
+Then open <http://localhost:8080>.
 
-Se a porta 8080 estiver ocupada:
+If port 8080 is already taken:
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
 ```
 
-| Endereço | O que é |
+| Address | What it is |
 |---|---|
-| <http://localhost:8080> | a interface de cálculo |
-| <http://localhost:8080/swagger-ui.html> | documentação interativa da API |
-| <http://localhost:8080/h2-console> | console do banco (JDBC URL `jdbc:h2:mem:graphdb`, usuário `sa`, sem senha) |
+| <http://localhost:8080> | the calculator UI |
+| <http://localhost:8080/swagger-ui.html> | interactive API docs |
+| <http://localhost:8080/h2-console> | database console (JDBC URL `jdbc:h2:mem:graphdb`, user `sa`, no password) |
 
-## Grafos de exemplo
+## Sample graphs
 
-O banco é recriado a cada inicialização e semeado com dois grafos, então há
-dados para usar imediatamente:
+The database is recreated on every startup and seeded with two graphs, so
+there is data to work with right away:
 
-| Id | Arestas (origem, destino, peso) |
+| Id | Edges (source, target, weight) |
 |---|---|
 | **1** | AB4, AE8 |
 | **2** | AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7 |
 
-O grafo é **dirigido**: `AB5` permite ir de A para B, não o contrário. Por isso
-não existe caminho de C para A no grafo 2.
+The graph is **directed**: `AB5` lets you go from A to B, not the other way
+around. That is why there is no path from C to A in graph 2.
 
 ## API
 
-### Menor caminho
+### Shortest path
 
 ```bash
 curl http://localhost:8080/distance/2/from/A/to/C
 # {"distance":9,"path":["A","B","C"]}
 ```
 
-A→B→C custa 5+4=9, menos que A→D→C (5+8=13) ou A→E→B→C (7+3+4=14).
+A→B→C costs 5+4=9, less than A→D→C (5+8=13) or A→E→B→C (7+3+4=14).
 
-Responde **404** quando o grafo não existe, quando algum dos vértices não
-pertence ao grafo, ou quando não há caminho entre eles.
+Returns **404** when the graph does not exist, when either vertex does not
+belong to it, or when there is no path between them.
 
-### Todas as rotas
+### All routes
 
 ```bash
 curl "http://localhost:8080/routes/2/from/A/to/C?maxStops=4"
@@ -76,14 +76,14 @@ curl "http://localhost:8080/routes/2/from/A/to/C?maxStops=4"
 #            {"route":"AEBC","stops":3},{"route":"ADEBC","stops":4}]}
 ```
 
-`maxStops` é opcional e limita o número de paradas. As rotas vêm ordenadas da
-mais curta para a mais longa.
+`maxStops` is optional and caps the number of stops. Routes come back sorted
+from shortest to longest.
 
-### Grafos
+### Graphs
 
 ```bash
-curl http://localhost:8080/graph        # lista todos
-curl http://localhost:8080/graph/2      # busca por id
+curl http://localhost:8080/graph        # list all
+curl http://localhost:8080/graph/2      # fetch by id
 
 curl -X POST http://localhost:8080/graph \
   -H 'Content-Type: application/json' \
@@ -91,16 +91,16 @@ curl -X POST http://localhost:8080/graph \
                {"source":"B","target":"C","distance":2}]}'
 ```
 
-## Testes
+## Tests
 
 ```bash
 ./mvnw test
 ```
 
-21 testes: o algoritmo de Dijkstra isoladamente (`DijkstraTest`), a camada HTTP
-com o servidor no ar (`GraphHttpTest`) e os controllers via MockMvc.
+21 tests: Dijkstra's algorithm on its own (`DijkstraTest`), the HTTP layer
+with a live server (`GraphHttpTest`), and the controllers through MockMvc.
 
-## Empacotar
+## Packaging
 
 ```bash
 ./mvnw clean package
@@ -109,8 +109,8 @@ java -jar target/dijkstra-graph-app-1.0.0.jar
 
 ## Stack
 
-Java 21 · Spring Boot 4.1.1 · Spring Data JPA · H2 em memória · Thymeleaf ·
+Java 21 · Spring Boot 4.1.1 · Spring Data JPA · in-memory H2 · Thymeleaf ·
 Bootstrap 5 · springdoc-openapi
 
-Os dados vivem em memória: tudo o que você criar desaparece ao parar a
-aplicação, e os dois grafos de exemplo voltam na próxima inicialização.
+Data lives in memory: anything you create is gone when the application stops,
+and the two sample graphs come back on the next startup.
