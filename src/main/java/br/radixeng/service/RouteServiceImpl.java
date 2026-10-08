@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +23,12 @@ import br.radixeng.exception.GraphException;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class RouteServiceImpl implements IRouteService{
 
-	private final static Logger LOG = LogManager.getLogger();
+	private final static Logger LOG = LoggerFactory.getLogger(RouteServiceImpl.class);
 
 	@Autowired
 	GraphServiceImpl graphService;
 	
-	@Autowired
-	RouteServiceImpl routeService;
-	
-	
+
 	private List<RouteDTO> routeStops = new ArrayList<>();
 	
 	
@@ -69,7 +66,7 @@ public class RouteServiceImpl implements IRouteService{
 			
 			} catch (GraphException ge) {
 				
-				LOG.info(ge);
+				LOG.warn("Não foi possível interpretar o grafo serializado", ge);
 			}
 			
 			vTown1 = graph.encontrarVertice(town1);
@@ -119,13 +116,13 @@ public class RouteServiceImpl implements IRouteService{
 		if(returnedGraph!=null) {
 		
 			for(Route route : returnedGraph.getData()) {
-				routeService.addEdge(route.getSource(), route.getTarget());
+				this.addEdge(route.getSource(), route.getTarget());
 			}
 			
 			LinkedList<String> visited = new LinkedList();
 			visited.add(town1);
 	 		
-			routeService.depthFirst(routeService, visited, town2, routeStops);
+			this.depthFirst(this, visited, town2, routeStops);
 			
 		} else {
 			
