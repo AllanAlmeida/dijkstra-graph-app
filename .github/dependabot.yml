@@ -1,0 +1,9 @@
+# Avisa sobre novas versões e vulnerabilidades nas dependências Maven.
+# Não há nenhum workflow de CI ou de deploy neste repositório.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
