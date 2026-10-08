@@ -39,28 +39,12 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- <dependency>
+		<!-- Banco em memória: nada para instalar ou configurar localmente -->
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency> -->
-		
-		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
 		</dependency>
-		
-		<dependency>
-		  <groupId>org.springframework.boot</groupId>
-		  <artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
-		
-		<dependency>
-            <groupId>com.wix</groupId>
-            <artifactId>wix-embedded-mysql</artifactId>
-            <version>4.2.0</version>
-            <scope>compile</scope>
-        </dependency>
 
 		<dependency>
 	            <groupId>io.springfox</groupId>
