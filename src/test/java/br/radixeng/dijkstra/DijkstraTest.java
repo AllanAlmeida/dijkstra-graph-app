@@ -2,6 +2,7 @@ package br.radixeng.dijkstra;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
@@ -130,5 +131,34 @@ class DijkstraTest {
 
 		assertEquals(List.of("A", "B"), descricoes(caminho));
 		assertEquals(4, caminho.get(caminho.size() - 1).getDistancia());
+	}
+
+	@Test
+	void pesoInvalidoViraGraphException() throws Exception {
+		// Sem isto um peso não numérico escapava como NumberFormatException,
+		// virando 500 em vez de erro tratado.
+		GraphException erro = assertThrows(GraphException.class,
+				() -> Dijkstra.lerGrafo("A,B/nao-e-numero\n"));
+
+		assertEquals("Peso de aresta inválido no grafo serializado", erro.getMessage());
+	}
+
+	@Test
+	void linhasEmBrancoSaoIgnoradas() throws Exception {
+
+		Grafo grafo = new Grafo();
+		grafo.setVertices(Dijkstra.lerGrafo("A,B/5\n\n   \nB,C/4\n"));
+
+		assertEquals(List.of("A", "B", "C"), descricoes(grafo.getVertices()));
+	}
+
+	@Test
+	void verticeIsoladoSemArestaERegistrado() throws Exception {
+		// Linha sem "/" descreve um vértice sem arestas
+		Grafo grafo = new Grafo();
+		grafo.setVertices(Dijkstra.lerGrafo("A,B/5\nZ\n"));
+
+		assertNotNull(grafo.encontrarVertice("Z"));
+		assertEquals(List.of(), grafo.encontrarVertice("Z").getArestas());
 	}
 }
