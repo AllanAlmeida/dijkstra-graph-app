@@ -64,6 +64,16 @@ class GraphHttpTest {
 	}
 
 	@Test
+	void grafoComVerticeQueSoApareceComoDestino() throws Exception {
+		// Grafo 1: AB4 e AE8. B e E nunca são origem, e antes da correção em
+		// Dijkstra.lerGrafo nenhuma consulta conseguia chegar neles.
+		HttpResponse<String> response = get("/distance/1/from/A/to/B");
+
+		assertEquals(200, response.statusCode());
+		assertEquals("{\"distance\":4,\"path\":[\"A\",\"B\"]}", response.body());
+	}
+
+	@Test
 	void origemInexistenteDevolve404() throws Exception {
 		// Antes respondia 500 com NullPointerException e o stack trace no corpo
 		assertEquals(404, get("/distance/2/from/Z/to/A").statusCode());
