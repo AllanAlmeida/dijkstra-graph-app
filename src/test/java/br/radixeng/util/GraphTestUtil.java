@@ -1,17 +1,11 @@
 package br.radixeng.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.radixeng.builder.GraphsBuilder;
 import br.radixeng.entities.Graph;
 import br.radixeng.entities.Route;
-import br.radixeng.exception.GraphException;
 import br.radixeng.service.GraphServiceImpl;
 
 public class GraphTestUtil {
-
-	private final static Logger LOG = LoggerFactory.getLogger(GraphTestUtil.class);
 
 	private final GraphServiceImpl graphService;
 
@@ -37,14 +31,8 @@ public class GraphTestUtil {
 
 	public void initGraph() {
 
-		try {
-
-			if (graphService.findById(2L) == null) {
-				graphService.saveGraph(buildedGraph());
-			}
-
-		} catch (GraphException e) {
-			LOG.error("Não foi possível salvar o grafo.", e);
+		if (graphService.findById(2L) == null) {
+			graphService.saveGraph(buildedGraph());
 		}
 	}
 }

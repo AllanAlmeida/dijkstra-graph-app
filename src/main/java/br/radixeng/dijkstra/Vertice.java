@@ -2,6 +2,7 @@ package br.radixeng.dijkstra;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Vertice implements Comparable<Vertice> {
         
@@ -83,13 +84,28 @@ public class Vertice implements Comparable<Vertice> {
 	        
 	}
 	
+	/**
+	 * Igualdade por descrição. Não é só conveniência: o algoritmo remove o
+	 * vértice atual da lista de não visitados com List.remove(Object), que
+	 * usa equals.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-	        if(obj instanceof Vertice){
-	                Vertice vRef = (Vertice) obj;
-	                if(this.getDescricao().equals(vRef.getDescricao())) return true;
-	        }
-	        return false;
+
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj instanceof Vertice) {
+			return Objects.equals(this.getDescricao(), ((Vertice) obj).getDescricao());
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(descricao);
 	}
 	
 	@Override

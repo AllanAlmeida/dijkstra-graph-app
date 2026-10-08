@@ -1,7 +1,6 @@
 package br.radixeng.service;
 
 import br.radixeng.entities.Graph;
-import br.radixeng.exception.GraphException;
 
 public interface IGraphService {
 
@@ -9,5 +8,5 @@ public interface IGraphService {
 	
 	Iterable<Graph> findAllGraphs();
 	
-	void saveGraph(Graph graph) throws GraphException;
+	void saveGraph(Graph graph);
 }

@@ -12,11 +12,6 @@ public class Grafo {
 		this.grafo.addAll(vertices);
 	}
 
-	public void adicionarVertice(Vertice novoVertice) {
-
-		this.grafo.add(novoVertice);
-	}
-
 	public List<Vertice> getVertices() {
 
 		return this.grafo;

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.radixeng.entities.Graph;
-import br.radixeng.exception.GraphException;
 import br.radixeng.repository.GraphRepository;
 
 @Service
@@ -39,7 +38,7 @@ public class GraphServiceImpl implements IGraphService{
 	}
 	
 	@Override
-	public void saveGraph(Graph graph) throws GraphException {
+	public void saveGraph(Graph graph) {
 		graphRepository.save(graph);
 	}
 }
