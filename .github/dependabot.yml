@@ -1,5 +1,5 @@
 # Avisa sobre novas versões e vulnerabilidades nas dependências Maven.
-# Não há nenhum workflow de CI ou de deploy neste repositório.
+# O workflow de CI valida o build e os testes; não há deploy automático.
 version: 2
 updates:
   - package-ecosystem: maven
