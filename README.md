@@ -97,7 +97,7 @@ curl -X POST http://localhost:8080/graph \
 ./mvnw test
 ```
 
-21 tests: Dijkstra's algorithm on its own (`DijkstraTest`), the HTTP layer
+30 tests: Dijkstra's algorithm on its own (`DijkstraTest`), the HTTP layer
 with a live server (`GraphHttpTest`), and the controllers through MockMvc.
 
 ## Packaging
@@ -109,7 +109,7 @@ java -jar target/dijkstra-graph-app-1.0.0.jar
 
 ## Stack
 
-Java 21 · Spring Boot 4.1.1 · Spring Data JPA · in-memory H2 · Thymeleaf ·
+Java 21 · Spring Boot 4.1.2 · Spring Data JPA · in-memory H2 · Thymeleaf ·
 Bootstrap 5 · springdoc-openapi
 
 Data lives in memory: anything you create is gone when the application stops,
